@@ -22,7 +22,7 @@ refactor: format lint
 deploy:
 	#deploy goes here
 		
-all: install lint test format deploy
+all: install format lint test deploy
 
 generate_and_push:
 	# Add, commit, and push the generated files to GitHub

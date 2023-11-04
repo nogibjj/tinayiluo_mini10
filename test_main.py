@@ -41,7 +41,10 @@ def test_describe(spark):
 def test_query(spark):
     df = load_data(spark)
     result = query(
-        spark, df, "SELECT * FROM DailyShowGuests WHERE YEAR = 1999", "DailyShowGuests"
+        spark,
+        df,
+        "SELECT * FROM COMIC_CHARACTERS WHERE YEAR = 1939",
+        "COMIC_CHARACTERS",
     )
     assert result is None
 

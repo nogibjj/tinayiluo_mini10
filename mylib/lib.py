@@ -6,7 +6,7 @@ import requests
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import when, col
 
-from pyspark.sql.types import StructType, StructField, IntegerType, StringType, DateType
+from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 
 LOG_FILE = "pyspark_output.md"
 
@@ -34,9 +34,9 @@ def end_spark(spark):
 
 def extract(
     url="""
-   https://github.com/fivethirtyeight/data/blob/master/daily-show-guests/daily_show_guests.csv?raw=true 
+   https://github.com/fivethirtyeight/data/blob/master/comic-characters/dc-wikia-data.csv?raw=true 
     """,
-    file_path="data/serve_times.csv",
+    file_path="data/comic_characters.csv",
     directory="data",
 ):
     """Extract a url to a file path"""
@@ -49,16 +49,24 @@ def extract(
     return file_path
 
 
-def load_data(spark, data="data/serve_times.csv", name="DailyShowGuests"):
+def load_data(spark, data="data/comic_characters.csv", name="COMIC_CHARACTERS"):
     """load data"""
     # data preprocessing by setting schema
     schema = StructType(
         [
+            StructField("page_id", IntegerType(), True),
+            StructField("name", StringType(), True),
+            StructField("urlslug", StringType(), True),
+            StructField("ID", StringType(), True),
+            StructField("ALIGN", StringType(), True),
+            StructField("EYE", StringType(), True),
+            StructField("HAIR", StringType(), True),
+            StructField("SEX", StringType(), True),
+            StructField("GSM", StringType(), True),
+            StructField("ALIVE", StringType(), True),
+            StructField("APPEARANCES", IntegerType(), True),
+            StructField("FIRST APPEARANCE", StringType(), True),
             StructField("YEAR", IntegerType(), True),
-            StructField("GoogleKnowlege_Occupation", StringType(), True),
-            StructField("Show", DateType(), True),
-            StructField("Group", StringType(), True),
-            StructField("Raw_Guest_List", StringType(), True),
         ]
     )
 
@@ -88,16 +96,14 @@ def describe(df):
 def example_transform(df):
     """does an example transformation on a predefiend dataset"""
     conditions = [
-        (col("GoogleKnowlege_Occupation") == "actor")
-        | (col("GoogleKnowlege_Occupation") == "actress"),
-        (col("GoogleKnowlege_Occupation") == "comedian")
-        | (col("GoogleKnowlege_Occupation") == "comic"),
+        (col("ALIGN") == "Good Characters"),
+        (col("ALIGN") == "Bad Characters"),
     ]
 
-    categories = ["Acting", "Comedy"]
+    categories = ["Hero", "Villain"]
 
     df = df.withColumn(
-        "Occupation_Category",
+        "Character_Category",
         when(conditions[0], categories[0])
         .when(conditions[1], categories[1])
         .otherwise("Other"),
